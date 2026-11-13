@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICT Quiz: Lessons 1 & 2</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a kid-friendly look -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-image: radial-gradient(circle at top right, #c7d2fe 0%, #e0e7ff 40%, #f3f4f6 100%);
+            min-height: 100vh;
+        }
+        /* Custom scrollbar for mistakes container */
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 antialiased text-gray-800">
+
+    <!-- Custom Alert Box (Replaces native alert) -->
+    <div id="custom-alert" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg font-bold transition-opacity duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
+        <span>⚠️</span> <span id="alert-message"></span>
+    </div>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-3xl bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/50">
+        
+        <!-- ================= WELCOME SCREEN ================= -->
+        <div id="welcome-screen" class="p-8 md:p-12 text-center flex flex-col items-center">
+            <div class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-5xl mb-6 shadow-inner">
+                🚀
+            </div>
+            <h1 class="text-3xl md:text-5xl font-extrabold text-indigo-900 mb-4 tracking-tight">ICT Quiz</h1>
+            <h2 class="text-xl md:text-2xl font-bold text-indigo-600 mb-8">Grade 7 | Lessons 1 & 2</h2>
+            
+            <p class="text-gray-600 mb-8 max-w-md mx-auto text-lg">
+                Ready to test your knowledge in Green Technology and Digital Transformation? Let's go!
+            </p>
+
+            <div class="w-full max-w-sm space-y-4">
+                <input type="text" id="studentName" placeholder="Enter your full name here..." 
+                       class="w-full px-5 py-4 rounded-xl border-2 border-indigo-100 bg-indigo-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 outline-none transition-all text-lg font-semibold text-center placeholder-indigo-300">
+                
+                <button onclick="startQuiz()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 text-xl">
+                    Start Exam 🎓
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= QUIZ SCREEN ================= -->
+        <div id="quiz-screen" class="hidden flex flex-col h-[80vh] md:h-auto min-h-[600px]">
+            <!-- Header & Progress -->
+            <div class="bg-indigo-50 p-6 md:px-8 md:py-6 border-b border-indigo-100">
+                <div class="flex justify-between items-end mb-3">
+                    <span class="font-bold text-indigo-800" id="progress-text">Question 1 of 40</span>
+                    <span class="text-sm font-semibold text-indigo-500 bg-indigo-100 px-3 py-1 rounded-full" id="student-name-display"></span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="progress-bar-fill" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Question Area -->
+            <div class="flex-1 p-6 md:p-8 flex flex-col">
+                <h2 id="questionText" class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 leading-tight flex-1">
+                    <!-- Question text goes here -->
+                </h2>
+
+                <!-- Options -->
+                <div id="optionsContainer" class="space-y-4 mb-8">
+                    <!-- Options buttons go here -->
+                </div>
+
+                <!-- Footer / Next Button -->
+                <div class="mt-auto flex justify-end">
+                    <button id="nextBtn" onclick="nextQuestion()" disabled
+                            class="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-600 text-white font-bold py-3 px-10 rounded-xl shadow-md transition-all text-lg flex items-center gap-2">
+                        Next <span>→</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= RESULT SCREEN ================= -->
+        <div id="result-screen" class="hidden p-6 md:p-10 flex flex-col h-[90vh] md:h-auto max-h-[90vh]">
+            <div class="text-center mb-8 shrink-0">
+                <div class="text-6xl mb-4">🏆</div>
+                <h2 id="final-score-text" class="text-2xl md:text-4xl font-extrabold text-indigo-900 mb-2">
+                    <!-- Congratulations message -->
+                </h2>
+                <p class="text-gray-500 font-semibold text-lg">Quiz completed successfully!</p>
+            </div>
+
+            <!-- Mistakes Review Section -->
+            <div class="flex-1 min-h-0 mb-8 bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden flex flex-col">
+                <div class="p-4 bg-gray-100 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                        🔍 Mistakes Review
+                    </h3>
+                </div>
+                <div id="mistakes-section" class="p-4 overflow-y-auto custom-scroll flex-1">
+                    <!-- Mistakes list goes here -->
+                </div>
+            </div>
+
+            <!-- WhatsApp Report Section -->
+            <div class="bg-green-50 p-6 rounded-2xl border border-green-200 shrink-0">
+                <h3 class="text-lg font-bold text-green-900 mb-3 flex items-center gap-2">
+                    📱 Send Report to Teacher
+                </h3>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="tel" id="teacherPhone" placeholder="WhatsApp No. (e.g. 201xxxxxxxxx)" 
+                           class="flex-1 px-4 py-3 rounded-xl border border-green-300 focus:ring-2 focus:ring-green-400 outline-none font-semibold">
+                    
+                    <button onclick="sendWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 whitespace-nowrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.347-.272.297-1.04 1.016-1.04 2.479 0 1.463 1.065 2.876 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                        Send via WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Quiz Data
+        const questions = [
+            {"q":"Green technology is also known as __________ technology.", "o":["harmful", "sustainable", "parallel", "traditional"], "a":"sustainable"},
+            {"q":"Electric vehicles are used in Egypt to decrease the emission of __________.", "o":["oxygen", "harmful substances", "water vapor", "nitrogen"], "a":"harmful substances"},
+            {"q":"Electric cars operate using __________.", "o":["gas", "diesel", "batteries", "coal"], "a":"batteries"},
+            {"q":"Solar energy uses __________ to convert sunlight into electricity.", "o":["wind turbines", "dams", "solar panels", "generators"], "a":"solar panels"},
+            {"q":"Wind power uses __________ to generate electricity.", "o":["wind turbines", "solar panels", "dams", "batteries"], "a":"wind turbines"},
+            {"q":"Hydropower uses __________ to generate electricity from water movement.", "o":["dams", "wind turbines", "solar panels", "soil"], "a":"dams"},
+            {"q":"__________ energy uses the Earth's internal heat to generate electricity.", "o":["Geothermal", "Solar", "Bioenergy", "Wind"], "a":"Geothermal"},
+            {"q":"Bioenergy uses organic materials, such as __________, to generate energy.", "o":["rocks and sand", "soybeans and corn", "plastic and glass", "metals"], "a":"soybeans and corn"},
+            {"q":"Green buildings use __________ materials.", "o":["eco-friendly", "harmful", "radioactive", "high-polluting"], "a":"eco-friendly"},
+            {"q":"Transforming organic waste into nutrient-rich compost enhances __________.", "o":["air pollution", "soil fertility", "water waste", "fuel consumption"], "a":"soil fertility"},
+            {"q":"Using smart, efficient irrigation systems like __________ helps in water treatment.", "o":["flooding", "drip irrigation", "wasting water", "hose pipes"], "a":"drip irrigation"},
+            {"q":"Vehicle emissions intensify __________.", "o":["global warming", "solar energy", "oxygen levels", "plant growth"], "a":"global warming"},
+            {"q":"Body sensors detect a hand under the tap to control the flow of __________.", "o":["electricity", "water", "gas", "wind"], "a":"water"},
+            {"q":"Sensors can optimize electricity usage by regulating __________ based on need.", "o":["lighting", "water flow", "farming", "traffic"], "a":"lighting"},
+            {"q":"Photovoltaic panels convert __________ into electrical energy.", "o":["wind", "solar energy", "water", "heat"], "a":"solar energy"},
+            {"q":"Sensors are used for detecting __________ from fires.", "o":["water", "smoke", "light", "sound"], "a":"smoke"},
+            {"q":"Digital transformation aims to enhance workflow efficiency and __________.", "o":["increase costs", "lower costs", "slow down work", "reduce quality"], "a":"lower costs"},
+            {"q":"Citizens can obtain all their products and services through the Internet in an easier and __________ way.", "o":["slower", "harder", "faster", "more expensive"], "a":"faster"},
+            {"q":"Digital transformation enhances sales and revenues through __________.", "o":["e-commerce", "manual labor", "paper documents", "wasting time"], "a":"e-commerce"},
+            {"q":"The Digital Egypt Platform is an example of a __________ tool.", "o":["workflow management", "video conference", "cybersecurity", "e-learning"], "a":"workflow management"},
+            {"q":"The Digital Egypt Platform offers services such as __________.", "o":["playing games", "bill payments", "printing documents", "cooking"], "a":"bill payments"},
+            {"q":"Electronic payment cards like __________ provide secure electronic payment methods.", "o":["Zoom", "Meeza", "Google Meet", "WhatsApp"], "a":"Meeza"},
+            {"q":"INSTAPAY application is licensed by the __________.", "o":["Ministry of Education", "Central Bank of Egypt", "Ministry of Health", "National Bank"], "a":"Central Bank of Egypt"},
+            {"q":"INSTAPAY enables the transfer of funds through bank accounts and __________.", "o":["cash", "digital wallets", "checks", "gold"], "a":"digital wallets"},
+            {"q":"Google Meet and Zoom are examples of __________ tools.", "o":["workflow management", "collaboration and communication", "electronic payment", "cybersecurity"], "a":"collaboration and communication"},
+            {"q":"To access digital services or products, you must have a/an __________.", "o":["email address", "home address", "driver's license", "passport"], "a":"email address"},
+            {"q":"Green technology and digital transformation work together to enhance __________.", "o":["resource efficiency", "carbon emissions", "paper usage", "waste"], "a":"resource efficiency"},
+            {"q":"Digital transformation reduces harmful emissions by decreasing the need for __________.", "o":["transportation", "Internet", "computers", "solar panels"], "a":"transportation"},
+            {"q":"An example of integrating green technology and digital transformation is __________.", "o":["Smart cities", "Traditional farming", "Coal factories", "Manual paperwork"], "a":"Smart cities"},
+            {"q":"Precision farming is an example of the integration of __________.", "o":["Green Tech and Digital Transformation", "Education and Health", "Sports and Music", "Manual labor and animals"], "a":"Green Tech and Digital Transformation"},
+            {"q":"Benefits of integrating Green Tech with Digital Transformation include __________.", "o":["slowing down work", "creating new employment opportunities", "increasing pollution", "wasting water"], "a":"creating new employment opportunities"},
+            {"q":"Electric cars help reduce __________.", "o":["solar energy", "traffic lights", "carbon dioxide levels", "digital transformation"], "a":"carbon dioxide levels"},
+            {"q":"Which of the following is NOT a form of renewable energy?", "o":["Solar energy", "Geothermal energy", "Fossil fuel", "Wind power"], "a":"Fossil fuel"},
+            {"q":"Recycling involves turning waste materials into __________.", "o":["fuel", "new products", "carbon emissions", "smoke"], "a":"new products"},
+            {"q":"Smart transportation uses __________ to improve energy efficiency.", "o":["electric vehicles", "gas cars", "diesel trucks", "coal trains"], "a":"electric vehicles"},
+            {"q":"Purifying contaminated water to be reused is part of __________.", "o":["waste recycling", "water treatment", "smart lighting", "bioenergy"], "a":"water treatment"},
+            {"q":"Which of the following is a cybersecurity solution?", "o":["Digital transformation tool", "Water treatment tool", "Farming tool", "Wind turbine"], "a":"Digital transformation tool"},
+            {"q":"Digital transformation helps in reducing energy and __________ consumption.", "o":["Internet", "resource", "data", "software"], "a":"resource"},
+            {"q":"Which app is used for video conferencing?", "o":["INSTAPAY", "Meeza", "Google Meet", "Digital Egypt"], "a":"Google Meet"},
+            {"q":"Enhancing decision-making is one of the benefits of __________.", "o":["waste recycling", "digital transformation", "wind power", "water treatment"], "a":"digital transformation"}
+        ];
+
+        // State Variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let studentName = "";
+        let mistakes = [];
+        let selectedOption = null;
+
+        // Utility function for custom alerts
+        function showAlert(msg) {
+            const alertBox = document.getElementById('custom-alert');
+            document.getElementById('alert-message').textContent = msg;
+            
+            alertBox.classList.remove('opacity-0', 'pointer-events-none');
+            alertBox.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                alertBox.classList.remove('opacity-100');
+                alertBox.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        // 1. Start Quiz Logic
+        function startQuiz() {
+            const nameInput = document.getElementById('studentName');
+            studentName = nameInput.value.trim();
+            
+            if (!studentName) {
+                showAlert("Please enter your name to start! 👋");
+                nameInput.focus();
+                return;
+            }
+
+            document.getElementById('student-name-display').textContent = `👤 ${studentName}`;
+            
+            // Hide welcome, show quiz
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            
+            loadQuestion();
+        }
+
+        // 2. Load Question Logic
+        function loadQuestion() {
+            selectedOption = null;
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = true;
+            
+            // Update Progress Bar
+            const progressPercentage = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progress-bar-fill').style.width = `${progressPercentage}%`;
+            document.getElementById('progress-text').textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+
+            // Get Current Question
+            const q = questions[currentQuestionIndex];
+            document.getElementById('questionText').textContent = q.q;
+
+            // Render Options
+            const optsContainer = document.getElementById('optionsContainer');
+            optsContainer.innerHTML = '';
+            
+            q.o.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                // Option Styling
+                btn.className = "w-full text-left p-5 rounded-2xl border-2 border-indigo-100 hover:border-indigo-400 hover:bg-indigo-50 transition-all duration-200 text-lg text-gray-700 font-semibold group flex items-center";
+                
+                // Add a cute icon before text
+                const icons = ['A', 'B', 'C', 'D'];
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold mr-4 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        ${icons[index]}
+                    </span>
+                    ${opt}
+                `;
+                
+                btn.onclick = () => selectOption(btn, opt);
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        // 3. Select Option Logic
+        function selectOption(selectedBtn, optText) {
+            selectedOption = optText;
+            const buttons = document.getElementById('optionsContainer').children;
+            
+            // Reset all buttons
+            for(let b of buttons) {
+                b.classList.remove('border-indigo-500', 'bg-indigo-100', 'ring-4', 'ring-indigo-200');
+                b.classList.add('border-indigo-100');
+                
+                // Reset icon colors
+                const icon = b.querySelector('span');
+                icon.classList.remove('bg-indigo-600', 'text-white');
+                icon.classList.add('bg-indigo-100', 'text-indigo-600');
+            }
+            
+            // Highlight selected button
+            selectedBtn.classList.add('border-indigo-500', 'bg-indigo-100', 'ring-4', 'ring-indigo-200');
+            selectedBtn.classList.remove('border-indigo-100');
+            
+            const selectedIcon = selectedBtn.querySelector('span');
+            selectedIcon.classList.remove('bg-indigo-100', 'text-indigo-600');
+            selectedIcon.classList.add('bg-indigo-600', 'text-white');
+
+            // Enable Next Button
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        // 4. Next Question Logic
+        function nextQuestion() {
+            if(!selectedOption) return;
+
+            const q = questions[currentQuestionIndex];
+            
+            // Check answer
+            if(selectedOption === q.a) {
+                score++;
+            } else {
+                mistakes.push({
+                    question: q.q,
+                    studentAnswer: selectedOption,
+                    correctAnswer: q.a
+                });
+            }
+
+            currentQuestionIndex++;
+            
+            if(currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                // Ensure progress bar reaches 100% at the very end visually before switching screens
+                document.getElementById('progress-bar-fill').style.width = '100%';
+                setTimeout(() => endQuiz(), 300);
+            }
+        }
+
+        // 5. End Quiz & Show Results
+        function endQuiz() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            document.getElementById('final-score-text').innerHTML = `
+                Congratulations <span class="text-purple-600">${studentName}</span>!<br>
+                You scored ${score}/${questions.length}
+            `;
+
+            const mistakesDiv = document.getElementById('mistakes-section');
+            
+            if(mistakes.length === 0) {
+                mistakesDiv.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center p-8 text-center bg-green-50 rounded-xl border border-green-200">
+                        <span class="text-5xl mb-4">🌟</span>
+                        <h4 class="text-2xl font-bold text-green-700 mb-2">Perfect Score!</h4>
+                        <p class="text-green-600 font-semibold text-lg">Outstanding job! You made zero mistakes.</p>
+                    </div>
+                `;
+            } else {
+                let html = `<div class="space-y-4">`;
+                mistakes.forEach((m, i) => {
+                    html += `
+                        <div class="bg-white p-5 rounded-xl border-l-4 border-red-400 shadow-sm">
+                            <p class="font-bold text-gray-800 mb-3 text-lg">${i+1}. ${m.question}</p>
+                            <div class="space-y-2">
+                                <p class="text-red-600 font-semibold bg-red-50 p-2 rounded flex items-center gap-2">
+                                    <span>❌</span> <span>Your answer: <span class="line-through opacity-80">${m.studentAnswer}</span></span>
+                                </p>
+                                <p class="text-green-700 font-semibold bg-green-50 p-2 rounded flex items-center gap-2">
+                                    <span>✅</span> Correct answer: ${m.correctAnswer}
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                mistakesDiv.innerHTML = html;
+            }
+        }
+
+        // 6. WhatsApp Integration Logic
+        function sendWhatsApp() {
+            const teacherPhone = document.getElementById('teacherPhone').value.trim();
+            
+            if(!teacherPhone) {
+                showAlert("Please enter the teacher's WhatsApp number!");
+                document.getElementById('teacherPhone').focus();
+                return;
+            }
+
+            let mistakesText = "";
+            if(mistakes.length === 0){
+                mistakesText = "I made zero mistakes! Perfect score! 🌟";
+            } else {
+                mistakesText = "My mistakes were:%0A";
+                mistakes.forEach((m, index) => {
+                    mistakesText += (index+1) + ". " + m.question + "%0A- My answer: ❌ " + m.studentAnswer + "%0A- Correct: ✅ " + m.correctAnswer + "%0A%0A";
+                });
+            }
+            
+            let text = "Hello Teacher! 👋%0AI am *" + studentName + "*.%0AI just finished the ICT Quiz (Lessons 1 & 2).%0A%0A🏆 *My score is " + score + "/" + questions.length + "*%0A%0A" + mistakesText;
+            
+            // Open WhatsApp in new tab
+            window.open("https://wa.me/" + teacherPhone + "?text=" + text, "_blank");
+        }
+    </script>
+</body>
+</html>
